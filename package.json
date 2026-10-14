@@ -1,0 +1,67 @@
+{
+  "name": "wsl-auto-reopen",
+  "displayName": "WSL Auto Reopen",
+  "description": "%description%",
+  "version": "0.1.0",
+  "publisher": "zacca",
+  "author": "Pedro Zaccaria",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pZacca/wsl-auto-reopen"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "wsl",
+    "remote",
+    "remote-wsl",
+    "unc",
+    "windows"
+  ],
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "extensionKind": [
+    "ui"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    }
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "WSL Auto Reopen",
+      "properties": {
+        "wslAutoReopen.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "%config.enabled%"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p .",
+    "watch": "tsc -watch -p .",
+    "test": "npm run compile && node --test \"out/test/**/*.test.js\"",
+    "package": "vsce package --allow-star-activation",
+    "install:windows": "npm run package && sh scripts/install-windows.sh",
+    "publish:vsce": "vsce publish --allow-star-activation",
+    "publish:ovsx": "ovsx publish"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/vscode": "~1.90.0",
+    "@vscode/vsce": "^4.0.0",
+    "ovsx": "^1.2.0",
+    "typescript": "^7.0.2"
+  }
+}

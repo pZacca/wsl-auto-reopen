@@ -1,0 +1,4 @@
+{
+  "description": "Abre pastas do \\\\wsl.localhost ou \\\\wsl$ direto numa janela WSL, sem precisar clicar em \"Reopen Folder in WSL\".",
+  "config.enabled": "Reabre automaticamente numa janela WSL as pastas abertas por um caminho de rede do WSL (`\\\\wsl.localhost\\...` ou `\\\\wsl$\\...`). Defina como `false` no `.vscode/settings.json` de uma pasta para mantê-la numa janela do Windows."
+}
