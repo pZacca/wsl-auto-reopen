@@ -59,16 +59,27 @@ Every window logs what the extension decided and why to **Output → WSL Auto Re
 
 ```sh
 npm install
+npm run lint              # Biome: lint + formatting (npm run lint:fix to apply)
+npm run typecheck
 npm test                  # compile + unit tests
 npm run package           # builds wsl-auto-reopen-<version>.vsix
+npm run smoke             # loads the packaged .vsix against a fake vscode API
 npm run install:windows   # from WSL: package and install into VS Code on Windows
 ```
+
+`npm run smoke` unpacks the `.vsix` away from the repo's `node_modules` and activates the packaged extension, so it catches files left out by `.vscodeignore` or dependencies left out of `dependencies`, which the unit tests can't see.
 
 The extension runs on the Windows side of VS Code, so builds have to be installed there. `npm run install:windows` uses the `code` CLI; set `CODE_CLI=code-insiders` (or a fork's CLI) to install elsewhere. From Windows, `code --install-extension wsl-auto-reopen-<version>.vsix` works too, as long as the `.vsix` is on a Windows drive: the CLI refuses to read from `\\wsl.localhost`.
 
 ### Releasing
 
-Bump `version` in `package.json`, update the changelog, and push a matching `v<version>` tag. The release workflow runs the tests, packages the extension once and publishes that `.vsix` to the Visual Studio Marketplace, Open VSX and a GitHub release. It needs the `VSCE_PAT` and `OVSX_PAT` repository secrets.
+Bump `version` in `package.json`, update the changelog, commit, then push a matching tag:
+
+```sh
+git tag v0.2.0 && git push origin main v0.2.0
+```
+
+The release workflow checks that the tag matches `package.json`, runs lint, typecheck, tests and the smoke test, packages the extension once and publishes that `.vsix` to the Visual Studio Marketplace, Open VSX and a GitHub release. It needs the `VSCE_PAT` and `OVSX_PAT` repository secrets.
 
 ## License
 
