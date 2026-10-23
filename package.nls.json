@@ -1,5 +1,6 @@
 {
   "description": "Opens folders from \\\\wsl.localhost or \\\\wsl$ straight in a WSL window, so you don't have to click \"Reopen Folder in WSL\".",
   "config.enabled": "Automatically reopen folders opened through a WSL network path (`\\\\wsl.localhost\\...` or `\\\\wsl$\\...`) in a WSL window. Set to `false` in a folder's `.vscode/settings.json` to keep that folder in a Windows window.",
-  "config.exclude": "WSL folders and workspace files that stay in a Windows window, as `\\\\wsl.localhost\\<distro>\\<path>` (or `\\\\wsl$\\...`). An entry also covers everything inside it."
+  "config.exclude": "WSL folders and workspace files that stay in a Windows window, as `\\\\wsl.localhost\\<distro>\\<path>` (or `\\\\wsl$\\...`). An entry also covers everything inside it. **WSL Auto Reopen: Reopen Folder in Windows and Keep It There** adds entries here when you pick **Only for me**.",
+  "command.reopenInWindows": "Reopen Folder in Windows and Keep It There"
 }

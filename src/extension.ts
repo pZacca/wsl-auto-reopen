@@ -1,12 +1,18 @@
 import * as vscode from 'vscode';
 import { decide } from './decide';
-import { formatWslUncPath, parseWslUncPath } from './wslUri';
+import { checkWorkspaceFolders } from './workspaceFile';
+import { findExclusion, formatWslUncPath, parseWslUncPath, wslUncUriPath } from './wslUri';
 
 const MISSING_RESOLVER_WARNED = 'missingResolverWarned';
 
 export function activate(context: vscode.ExtensionContext): void {
   const log = vscode.window.createOutputChannel('WSL Auto Reopen', { log: true });
-  context.subscriptions.push(log);
+  context.subscriptions.push(
+    log,
+    vscode.commands.registerCommand('wslAutoReopen.reopenInWindows', () =>
+      reopenInWindows(log).catch((err) => log.error('Reopening in Windows failed:', err)),
+    ),
+  );
   autoReopen(context, log).catch((err) => log.error('Reopening in WSL failed:', err));
 }
 
@@ -38,6 +44,63 @@ async function autoReopen(context: vscode.ExtensionContext, log: vscode.LogOutpu
   // The resolver only claims the `wsl` authority in its manifest; whether WSL and the distro actually start is up to it.
   log.info(`Reopening ${formatWslUncPath(target)} as ${uri.toString(true)} through ${resolver}.`);
   await vscode.commands.executeCommand('vscode.openFolder', uri, { forceReuseWindow: true });
+}
+
+/**
+ * Keeps the current WSL folder or workspace out of auto reopen, either for this user (wslAutoReopen.exclude)
+ * or for the project (wslAutoReopen.enabled in its settings), then reopens it through \\wsl.localhost.
+ */
+async function reopenInWindows(log: vscode.LogOutputChannel): Promise<void> {
+  const folders = vscode.workspace.workspaceFolders ?? [];
+  const current = vscode.workspace.workspaceFile ?? (folders.length === 1 ? folders[0].uri : undefined);
+  const distro = current?.scheme === 'vscode-remote' ? /^wsl\+(.+)$/.exec(current.authority)?.[1] : undefined;
+  if (!current || !distro) {
+    void vscode.window.showInformationMessage(vscode.l10n.t('Open a single WSL folder or a saved workspace in WSL first.'));
+    return;
+  }
+
+  const target = { distro, path: current.path };
+  if (vscode.workspace.workspaceFile) {
+    const content = new TextDecoder().decode(await vscode.workspace.fs.readFile(current));
+    const problem = checkWorkspaceFolders(content, target.path);
+    if (problem) {
+      log.info(`Not reopening in Windows: ${problem}.`);
+      void vscode.window.showWarningMessage(vscode.l10n.t('This workspace cannot be opened from Windows: {0}.', problem));
+      return;
+    }
+  }
+
+  // A .code-workspace keeps its settings in the file itself; a folder keeps them in .vscode/settings.json.
+  const projectSettings = vscode.workspace.workspaceFile ? target.path.slice(target.path.lastIndexOf('/') + 1) : '.vscode/settings.json';
+  const forMe: vscode.QuickPickItem = {
+    label: vscode.l10n.t('Only for me'),
+    detail: vscode.l10n.t('Adds it to wslAutoReopen.exclude in your user settings.'),
+  };
+  const forProject: vscode.QuickPickItem = {
+    label: vscode.l10n.t('For everyone who opens this project'),
+    detail: vscode.l10n.t('Sets wslAutoReopen.enabled to false in {0}, which is part of the project.', projectSettings),
+  };
+  const choice = await vscode.window.showQuickPick([forMe, forProject], {
+    placeHolder: vscode.l10n.t('Keep it in Windows for whom?'),
+  });
+  if (!choice) return;
+
+  const config = vscode.workspace.getConfiguration('wslAutoReopen');
+  if (choice === forProject) {
+    await config.update('enabled', false, vscode.ConfigurationTarget.Workspace);
+    log.info(`Set wslAutoReopen.enabled to false in ${projectSettings}.`);
+  } else {
+    const exclude = readExclude();
+    if (!findExclusion(target, exclude)) {
+      const entry = formatWslUncPath(target);
+      await config.update('exclude', [...exclude, entry], vscode.ConfigurationTarget.Global);
+      log.info(`Added ${entry} to wslAutoReopen.exclude.`);
+    }
+  }
+
+  const uri = vscode.Uri.from({ scheme: 'file', authority: 'wsl.localhost', path: wslUncUriPath(target) });
+  // Without forceLocalWindow, openFolder keeps the current window's remote authority.
+  await vscode.commands.executeCommand('vscode.openFolder', uri, { forceReuseWindow: true, forceLocalWindow: true });
 }
 
 function readExclude(): string[] {

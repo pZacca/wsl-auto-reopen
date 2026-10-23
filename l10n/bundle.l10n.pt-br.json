@@ -1,5 +1,12 @@
 {
+  "Open a single WSL folder or a saved workspace in WSL first.": "Abra antes uma única pasta ou um workspace salvo no WSL.",
   "Show WSL Extension": "Mostrar Extensão WSL",
   "Search Extensions": "Buscar Extensões",
-  "No installed extension can open WSL windows, so this folder stays in Windows. Install one to have WSL folders reopened in WSL.": "Nenhuma extensão instalada consegue abrir janelas WSL, então esta pasta fica no Windows. Instale uma para que as pastas do WSL sejam reabertas no WSL."
+  "No installed extension can open WSL windows, so this folder stays in Windows. Install one to have WSL folders reopened in WSL.": "Nenhuma extensão instalada consegue abrir janelas WSL, então esta pasta fica no Windows. Instale uma para que as pastas do WSL sejam reabertas no WSL.",
+  "This workspace cannot be opened from Windows: {0}.": "Este workspace não pode ser aberto pelo Windows: {0}.",
+  "Only for me": "Só para mim",
+  "Adds it to wslAutoReopen.exclude in your user settings.": "Adiciona ao wslAutoReopen.exclude nas suas configurações de usuário.",
+  "For everyone who opens this project": "Para todos que abrirem este projeto",
+  "Sets wslAutoReopen.enabled to false in {0}, which is part of the project.": "Define wslAutoReopen.enabled como false em {0}, que faz parte do projeto.",
+  "Keep it in Windows for whom?": "Manter no Windows para quem?"
 }

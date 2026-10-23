@@ -37,6 +37,28 @@
   "main": "./out/extension.js",
   "l10n": "./l10n",
   "contributes": {
+    "commands": [
+      {
+        "command": "wslAutoReopen.reopenInWindows",
+        "title": "%command.reopenInWindows%",
+        "category": "WSL Auto Reopen"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "wslAutoReopen.reopenInWindows",
+          "when": "remoteName == wsl"
+        }
+      ],
+      "statusBar/remoteIndicator": [
+        {
+          "command": "wslAutoReopen.reopenInWindows",
+          "when": "remoteName == wsl",
+          "group": "remote_20_wsl_autoReopen@1"
+        }
+      ]
+    },
     "configuration": {
       "title": "WSL Auto Reopen",
       "properties": {

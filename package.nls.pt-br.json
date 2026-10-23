@@ -1,5 +1,6 @@
 {
   "description": "Abre pastas do \\\\wsl.localhost ou \\\\wsl$ direto numa janela WSL, sem precisar clicar em \"Reopen Folder in WSL\".",
   "config.enabled": "Reabre automaticamente numa janela WSL as pastas abertas por um caminho de rede do WSL (`\\\\wsl.localhost\\...` ou `\\\\wsl$\\...`). Defina como `false` no `.vscode/settings.json` de uma pasta para mantê-la numa janela do Windows.",
-  "config.exclude": "Pastas e arquivos de workspace do WSL que ficam numa janela do Windows, no formato `\\\\wsl.localhost\\<distro>\\<caminho>` (ou `\\\\wsl$\\...`). Uma entrada vale também para tudo o que está dentro dela."
+  "config.exclude": "Pastas e arquivos de workspace do WSL que ficam numa janela do Windows, no formato `\\\\wsl.localhost\\<distro>\\<caminho>` (ou `\\\\wsl$\\...`). Uma entrada vale também para tudo o que está dentro dela. O comando **WSL Auto Reopen: Reabrir Pasta no Windows e Mantê-la Lá** adiciona entradas aqui quando você escolhe **Só para mim**.",
+  "command.reopenInWindows": "Reabrir Pasta no Windows e Mantê-la Lá"
 }
