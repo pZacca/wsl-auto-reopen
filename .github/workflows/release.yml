@@ -1,5 +1,8 @@
 name: Release
 
+# Pushing a tag like v0.2.0 publishes that version. The tag must match the version in package.json;
+# the job refuses otherwise.
+
 on:
   push:
     tags: ['v*']
@@ -26,8 +29,11 @@ jobs:
             exit 1
           fi
           echo "vsix=wsl-auto-reopen-$version.vsix" >> "$GITHUB_OUTPUT"
+      - run: npm run lint
+      - run: npm run typecheck
       - run: npm test
       - run: npm run package
+      - run: npm run smoke
       # Both registries and the GitHub release get the same .vsix.
       - run: npx vsce publish --allow-star-activation --packagePath "${{ steps.version.outputs.vsix }}"
         env:
@@ -35,6 +41,6 @@ jobs:
       - run: npx ovsx publish "${{ steps.version.outputs.vsix }}"
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
-      - run: gh release create "$GITHUB_REF_NAME" "${{ steps.version.outputs.vsix }}" --generate-notes
+      - run: gh release create "$GITHUB_REF_NAME" "${{ steps.version.outputs.vsix }}" --generate-notes --verify-tag
         env:
           GH_TOKEN: ${{ github.token }}

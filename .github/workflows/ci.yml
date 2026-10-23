@@ -15,8 +15,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
       - run: npm test
       - run: npm run package
+      - run: npm run smoke
       - uses: actions/upload-artifact@v7
         with:
           name: vsix
