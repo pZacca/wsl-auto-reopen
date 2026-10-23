@@ -15,6 +15,9 @@
     "url": "https://github.com/pZacca/wsl-auto-reopen/issues"
   },
   "homepage": "https://github.com/pZacca/wsl-auto-reopen#readme",
+  "sponsor": {
+    "url": "https://github.com/sponsors/pZacca"
+  },
   "galleryBanner": {
     "color": "#1E1E1E",
     "theme": "dark"
