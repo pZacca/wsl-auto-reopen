@@ -13,6 +13,11 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # Each registry is published to only when its token is set. Without VSCE_PAT (it needs an Azure DevOps
+    # organization, which needs an Azure subscription), upload the .vsix from the GitHub release by hand.
+    env:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -35,12 +40,14 @@ jobs:
       - run: npm run package
       - run: npm run smoke
       # Both registries and the GitHub release get the same .vsix.
-      - run: npx vsce publish --allow-star-activation --packagePath "${{ steps.version.outputs.vsix }}"
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
-      - run: npx ovsx publish "${{ steps.version.outputs.vsix }}"
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      - if: env.VSCE_PAT != ''
+        run: npx vsce publish --allow-star-activation --packagePath "${{ steps.version.outputs.vsix }}"
+      - if: env.VSCE_PAT == ''
+        run: echo "::notice::VSCE_PAT is not set. Upload ${{ steps.version.outputs.vsix }} from the GitHub release at https://marketplace.visualstudio.com/manage/publishers/zacca"
+      - if: env.OVSX_PAT != ''
+        run: npx ovsx publish "${{ steps.version.outputs.vsix }}"
+      - if: env.OVSX_PAT == ''
+        run: echo "::notice::OVSX_PAT is not set, so ${{ steps.version.outputs.vsix }} was not published to Open VSX."
       - run: gh release create "$GITHUB_REF_NAME" "${{ steps.version.outputs.vsix }}" --generate-notes --verify-tag
         env:
           GH_TOKEN: ${{ github.token }}
