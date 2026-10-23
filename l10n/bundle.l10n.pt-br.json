@@ -1,0 +1,5 @@
+{
+  "Show WSL Extension": "Mostrar Extensão WSL",
+  "Search Extensions": "Buscar Extensões",
+  "No installed extension can open WSL windows, so this folder stays in Windows. Install one to have WSL folders reopened in WSL.": "Nenhuma extensão instalada consegue abrir janelas WSL, então esta pasta fica no Windows. Instale uma para que as pastas do WSL sejam reabertas no WSL."
+}
