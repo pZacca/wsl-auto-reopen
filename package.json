@@ -57,6 +57,9 @@
     "publish:vsce": "vsce publish --allow-star-activation",
     "publish:ovsx": "ovsx publish"
   },
+  "dependencies": {
+    "jsonc-parser": "^3.3.1"
+  },
   "devDependencies": {
     "@types/node": "^22.20.5",
     "@types/vscode": "~1.90.0",

@@ -7,3 +7,6 @@ out/test/**
 tsconfig.json
 .gitignore
 *.vsix
+node_modules/jsonc-parser/lib/esm/**
+node_modules/**/*.d.ts
+node_modules/jsonc-parser/{CHANGELOG,README,SECURITY}.md
