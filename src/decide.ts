@@ -27,7 +27,9 @@ export async function decide(window: WindowState): Promise<Decision> {
   if (window.remoteName) return skip(`the window is already remote (${window.remoteName})`);
   if (!window.enabled) return skip('wslAutoReopen.enabled is false');
 
-  const target = window.workspaceFile ? await workspaceTarget(window) : folderTarget(window.folders);
+  const target = window.workspaceFile
+    ? await workspaceTarget(window.workspaceFile, window.readFile)
+    : folderTarget(window.folders);
   if (typeof target === 'string') return skip(target);
 
   const exclusion = findExclusion(target, window.exclude);
@@ -50,14 +52,16 @@ function folderTarget(folders: readonly UriParts[]): WslFolder | string {
   return parseWslUncUri(scheme, authority, path) ?? 'the folder is not on a WSL network path';
 }
 
-async function workspaceTarget(window: WindowState): Promise<WslFolder | string> {
-  const { scheme, authority, path } = window.workspaceFile!;
-  const target = parseWslUncUri(scheme, authority, path);
+async function workspaceTarget(
+  workspaceFile: UriParts,
+  readFile: WindowState['readFile'],
+): Promise<WslFolder | string> {
+  const target = parseWslUncUri(workspaceFile.scheme, workspaceFile.authority, workspaceFile.path);
   if (!target) return 'the workspace file is not on a WSL network path';
 
   let content: string;
   try {
-    content = await window.readFile(window.workspaceFile!);
+    content = await readFile(workspaceFile);
   } catch (err) {
     return `the workspace file could not be read (${err instanceof Error ? err.message : String(err)})`;
   }
