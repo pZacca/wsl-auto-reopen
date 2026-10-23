@@ -11,3 +11,5 @@ images/icon.svg
 node_modules/jsonc-parser/lib/esm/**
 node_modules/**/*.d.ts
 node_modules/jsonc-parser/{CHANGELOG,README,SECURITY}.md
+.claude/**
+biome.json

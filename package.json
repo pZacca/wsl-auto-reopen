@@ -99,6 +99,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "test": "npm run compile && node --test \"out/test/**/*.test.js\"",
+    "smoke": "node scripts/smoke.mjs",
     "package": "vsce package --allow-star-activation",
     "install:windows": "npm run package && sh scripts/install-windows.sh",
     "publish:vsce": "vsce publish --allow-star-activation",
