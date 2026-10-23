@@ -6,30 +6,54 @@ When you open a folder that lives inside WSL through its Windows network path, f
 
 ## How it works
 
-On startup, if the window is a local (non-remote) window with a single folder on `\\wsl.localhost\<distro>\...` or `\\wsl$\<distro>\...`, the extension reopens that same folder in WSL in the same window. Every other window is left alone.
+On startup, if the window is a local (non-remote) window with a single folder on `\\wsl.localhost\<distro>\...` or `\\wsl$\<distro>\...`, the extension reopens that same folder in WSL in the same window. Workspace files (`.code-workspace`) stored in WSL are reopened the same way, as long as every folder in them is a relative path that stays inside the distro. Every other window is left alone.
 
 You will see the window load briefly as a Windows folder and then reload in WSL.
 
+The extension activates on startup (`"activationEvents": ["*"]`) on purpose: waiting for `onStartupFinished` would only make that Windows window stay up longer before the reload.
+
 ## Requirements
 
-- VS Code on Windows with the [WSL extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl) (or a fork's WSL remote extension that resolves the `wsl` authority). Without one, the extension does nothing.
+- VS Code on Windows with the [WSL extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl) (or a fork's WSL remote extension that resolves the `wsl` authority). Without one, the extension does nothing and tells you once.
+
+## Keeping a folder in Windows
+
+In a WSL window, run **WSL Auto Reopen: Reopen Folder in Windows and Keep It There** from the Command Palette or the remote menu (the green button at the bottom left). It asks who the folder should stay in Windows for, saves that, and reopens the folder in a Windows window:
+
+- **Only for me** adds the folder to `wslAutoReopen.exclude` in your user settings (`%APPDATA%\Code\User\settings.json`). Nothing in the project changes.
+- **For everyone who opens this project** sets `wslAutoReopen.enabled` to `false` in the project settings: `.vscode/settings.json` for a folder, or the `settings` of a `.code-workspace` file. Commit it to share it.
+
+To undo it, remove the entry or the setting again.
+
+The built-in **Reopen Folder in Windows** gets bounced back to WSL, because the extension can't tell it apart from opening the folder from File Explorer.
 
 ## Settings
 
 | Setting | Default | Description |
 | --- | --- | --- |
 | `wslAutoReopen.enabled` | `true` | Reopen WSL folders in WSL automatically. |
+| `wslAutoReopen.exclude` | `[]` | Folders and workspace files that stay in Windows, as `\\wsl.localhost\<distro>\<path>` or `\\wsl$\<distro>\<path>`. An entry also covers everything inside it. User settings only. |
 
-To keep one specific folder in a Windows window, put this in that folder's `.vscode/settings.json`:
+```json
+{
+  "wslAutoReopen.exclude": ["\\\\wsl.localhost\\Ubuntu\\home\\you\\windows-only"]
+}
+```
+
+To keep a folder in Windows for everyone who opens it, turn the extension off in that folder's `.vscode/settings.json`, which lives in the project:
 
 ```json
 { "wslAutoReopen.enabled": false }
 ```
 
+## Troubleshooting
+
+Every window logs what the extension decided and why to **Output → WSL Auto Reopen**, for example `Not reopening in WSL: the folder is not on a WSL network path.`
+
 ## Limitations
 
-- Multi-root workspaces (`.code-workspace`) and single files are not reopened.
-- **Reopen Folder in Windows** from a WSL window gets bounced back to WSL. Disable the setting for that folder (see above) if you want it in Windows.
+- Single files and untitled multi-root workspaces are not reopened.
+- Workspace files with absolute folder paths, `uri` folders, backslashes in folder paths or `..` above the distro root stay in Windows, since those folders would mean something else inside WSL. For the same reason, **Reopen Folder in Windows and Keep It There** refuses WSL workspaces with such folders.
 
 ## Development
 
@@ -40,7 +64,11 @@ npm run package           # builds wsl-auto-reopen-<version>.vsix
 npm run install:windows   # from WSL: package and install into VS Code on Windows
 ```
 
-The extension runs on the Windows side of VS Code, so builds have to be installed there. From Windows, `code --install-extension wsl-auto-reopen-<version>.vsix` works too, as long as the `.vsix` is on a Windows drive: the CLI refuses to read from `\\wsl.localhost`.
+The extension runs on the Windows side of VS Code, so builds have to be installed there. `npm run install:windows` uses the `code` CLI; set `CODE_CLI=code-insiders` (or a fork's CLI) to install elsewhere. From Windows, `code --install-extension wsl-auto-reopen-<version>.vsix` works too, as long as the `.vsix` is on a Windows drive: the CLI refuses to read from `\\wsl.localhost`.
+
+### Releasing
+
+Bump `version` in `package.json`, update the changelog, and push a matching `v<version>` tag. The release workflow runs the tests, packages the extension once and publishes that `.vsix` to the Visual Studio Marketplace, Open VSX and a GitHub release. It needs the `VSCE_PAT` and `OVSX_PAT` repository secrets.
 
 ## License
 
