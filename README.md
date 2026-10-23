@@ -79,7 +79,9 @@ Bump `version` in `package.json`, update the changelog, commit, then push a matc
 git tag v0.2.0 && git push origin main v0.2.0
 ```
 
-The release workflow checks that the tag matches `package.json`, runs lint, typecheck, tests and the smoke test, packages the extension once and publishes that `.vsix` to the Visual Studio Marketplace, Open VSX and a GitHub release. It needs the `VSCE_PAT` and `OVSX_PAT` repository secrets.
+The release workflow checks that the tag matches `package.json`, runs lint, typecheck, tests and the smoke test, packages the extension once and publishes that `.vsix` to the Visual Studio Marketplace, Open VSX and a GitHub release.
+
+Each registry is published to only when its repository secret is set: `VSCE_PAT` for the Marketplace and `OVSX_PAT` for Open VSX. A Marketplace token comes from an Azure DevOps organization, which needs an Azure subscription, so without one, download the `.vsix` from the GitHub release and upload it at [Manage Publishers & Extensions](https://marketplace.visualstudio.com/manage/publishers/zacca): **New extension → Visual Studio Code** the first time, **Update** after that.
 
 ## License
 
