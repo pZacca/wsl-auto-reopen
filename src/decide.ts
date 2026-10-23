@@ -36,7 +36,11 @@ export async function decide(window: WindowState): Promise<Decision> {
   if (exclusion) return skip(`it is excluded by the wslAutoReopen.exclude entry ${exclusion}`);
 
   if (!window.resolver) {
-    return { action: 'skip', reason: 'no installed extension resolves the wsl remote authority', missingResolver: true };
+    return {
+      action: 'skip',
+      reason: 'no installed extension resolves the wsl remote authority',
+      missingResolver: true,
+    };
   }
   return { action: 'reopen', target, resolver: window.resolver };
 }

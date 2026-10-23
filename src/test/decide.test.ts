@@ -33,7 +33,10 @@ test('skips remote windows, disabled windows and non-WSL folders', async () => {
 });
 
 test('skips excluded folders', async () => {
-  assert.match(reason(await decide(window({ exclude: ['\\\\wsl.localhost\\Ubuntu\\home\\user'] }))), /excluded .*\\\\wsl.localhost\\Ubuntu\\home\\user/);
+  assert.match(
+    reason(await decide(window({ exclude: ['\\\\wsl.localhost\\Ubuntu\\home\\user'] }))),
+    /excluded .*\\\\wsl.localhost\\Ubuntu\\home\\user/,
+  );
 });
 
 test('flags a missing resolver only for folders it would have reopened', async () => {
@@ -62,13 +65,23 @@ test('reopens a WSL workspace file whose folders carry over', async () => {
 });
 
 test('skips workspace files that are local, untitled, unreadable or have folders that do not carry over', async () => {
-  assert.match(reason(await decide(window({ workspaceFile: folder('/c:/code/app.code-workspace', '') }))), /workspace file is not on a WSL/);
-  assert.match(reason(await decide(window({ workspaceFile: { scheme: 'untitled', authority: '', path: '/Untitled-1' } }))), /workspace file is not on a WSL/);
+  assert.match(
+    reason(await decide(window({ workspaceFile: folder('/c:/code/app.code-workspace', '') }))),
+    /workspace file is not on a WSL/,
+  );
+  assert.match(
+    reason(await decide(window({ workspaceFile: { scheme: 'untitled', authority: '', path: '/Untitled-1' } }))),
+    /workspace file is not on a WSL/,
+  );
 
   const wslWorkspace = folder('/Ubuntu/home/user/app/app.code-workspace');
   assert.match(reason(await decide(window({ workspaceFile: wslWorkspace }))), /could not be read \(unexpected read\)/);
   assert.match(
-    reason(await decide(window({ workspaceFile: wslWorkspace, readFile: async () => '{ "folders": [{ "path": "C:\\\\code" }] }' }))),
+    reason(
+      await decide(
+        window({ workspaceFile: wslWorkspace, readFile: async () => '{ "folders": [{ "path": "C:\\\\code" }] }' }),
+      ),
+    ),
     /absolute path/,
   );
 });

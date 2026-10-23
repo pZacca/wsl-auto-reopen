@@ -1,4 +1,4 @@
-import { parse, type ParseError } from 'jsonc-parser';
+import { type ParseError, parse } from 'jsonc-parser';
 
 /**
  * Checks that every folder of a .code-workspace file in WSL means the same thing whether the file is
@@ -14,7 +14,9 @@ import { parse, type ParseError } from 'jsonc-parser';
 export function checkWorkspaceFolders(content: string, workspacePath: string): string | undefined {
   const errors: ParseError[] = [];
   const workspace: unknown = parse(content, errors, { allowTrailingComma: true });
-  if (errors.length > 0 || typeof workspace !== 'object' || workspace === null) return 'the workspace file is not valid JSON';
+  if (errors.length > 0 || typeof workspace !== 'object' || workspace === null) {
+    return 'the workspace file is not valid JSON';
+  }
 
   const folders: unknown = (workspace as { folders?: unknown }).folders ?? [];
   if (!Array.isArray(folders)) return 'the workspace file has no valid "folders" list';

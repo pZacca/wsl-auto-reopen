@@ -55,7 +55,9 @@ async function reopenInWindows(log: vscode.LogOutputChannel): Promise<void> {
   const current = vscode.workspace.workspaceFile ?? (folders.length === 1 ? folders[0].uri : undefined);
   const distro = current?.scheme === 'vscode-remote' ? /^wsl\+(.+)$/.exec(current.authority)?.[1] : undefined;
   if (!current || !distro) {
-    void vscode.window.showInformationMessage(vscode.l10n.t('Open a single WSL folder or a saved workspace in WSL first.'));
+    void vscode.window.showInformationMessage(
+      vscode.l10n.t('Open a single WSL folder or a saved workspace in WSL first.'),
+    );
     return;
   }
 
@@ -65,13 +67,17 @@ async function reopenInWindows(log: vscode.LogOutputChannel): Promise<void> {
     const problem = checkWorkspaceFolders(content, target.path);
     if (problem) {
       log.info(`Not reopening in Windows: ${problem}.`);
-      void vscode.window.showWarningMessage(vscode.l10n.t('This workspace cannot be opened from Windows: {0}.', problem));
+      void vscode.window.showWarningMessage(
+        vscode.l10n.t('This workspace cannot be opened from Windows: {0}.', problem),
+      );
       return;
     }
   }
 
   // A .code-workspace keeps its settings in the file itself; a folder keeps them in .vscode/settings.json.
-  const projectSettings = vscode.workspace.workspaceFile ? target.path.slice(target.path.lastIndexOf('/') + 1) : '.vscode/settings.json';
+  const projectSettings = vscode.workspace.workspaceFile
+    ? target.path.slice(target.path.lastIndexOf('/') + 1)
+    : '.vscode/settings.json';
   const forMe: vscode.QuickPickItem = {
     label: vscode.l10n.t('Only for me'),
     detail: vscode.l10n.t('Adds it to wslAutoReopen.exclude in your user settings.'),
@@ -125,10 +131,15 @@ async function warnMissingResolver(context: vscode.ExtensionContext): Promise<vo
   const isVsCode = vscode.env.uriScheme === 'vscode' || vscode.env.uriScheme === 'vscode-insiders';
   const action = isVsCode ? vscode.l10n.t('Show WSL Extension') : vscode.l10n.t('Search Extensions');
   const choice = await vscode.window.showWarningMessage(
-    vscode.l10n.t('No installed extension can open WSL windows, so this folder stays in Windows. Install one to have WSL folders reopened in WSL.'),
+    vscode.l10n.t(
+      'No installed extension can open WSL windows, so this folder stays in Windows. Install one to have WSL folders reopened in WSL.',
+    ),
     action,
   );
   if (choice === action) {
-    await vscode.commands.executeCommand('workbench.extensions.search', isVsCode ? '@id:ms-vscode-remote.remote-wsl' : 'wsl');
+    await vscode.commands.executeCommand(
+      'workbench.extensions.search',
+      isVsCode ? '@id:ms-vscode-remote.remote-wsl' : 'wsl',
+    );
   }
 }

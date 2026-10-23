@@ -5,18 +5,36 @@ import { checkWorkspaceFolders } from '../workspaceFile';
 const workspace = (folders: unknown) => JSON.stringify({ folders });
 
 test('accepts relative folders, comments and trailing commas', () => {
-  assert.equal(checkWorkspaceFolders(workspace([{ path: '.' }, { path: 'api' }, { path: '../shared/lib' }]), '/home/user/app/app.code-workspace'), undefined);
-  assert.equal(checkWorkspaceFolders('{ // folders\n "folders": [{ "path": "web", },], }', '/home/user/app/app.code-workspace'), undefined);
+  assert.equal(
+    checkWorkspaceFolders(
+      workspace([{ path: '.' }, { path: 'api' }, { path: '../shared/lib' }]),
+      '/home/user/app/app.code-workspace',
+    ),
+    undefined,
+  );
+  assert.equal(
+    checkWorkspaceFolders('{ // folders\n "folders": [{ "path": "web", },], }', '/home/user/app/app.code-workspace'),
+    undefined,
+  );
   assert.equal(checkWorkspaceFolders('{ "settings": {} }', '/home/user/app/app.code-workspace'), undefined);
 });
 
 test('accepts .. up to the distro root', () => {
-  assert.equal(checkWorkspaceFolders(workspace([{ path: '../../../etc' }]), '/home/user/app/app.code-workspace'), undefined);
+  assert.equal(
+    checkWorkspaceFolders(workspace([{ path: '../../../etc' }]), '/home/user/app/app.code-workspace'),
+    undefined,
+  );
 });
 
 test('rejects .. above the distro root', () => {
-  assert.match(checkWorkspaceFolders(workspace([{ path: '../../../../Debian/home' }]), '/home/user/app/app.code-workspace') ?? '', /above the distro root/);
-  assert.match(checkWorkspaceFolders(workspace([{ path: 'a/../../x' }]), '/app.code-workspace') ?? '', /above the distro root/);
+  assert.match(
+    checkWorkspaceFolders(workspace([{ path: '../../../../Debian/home' }]), '/home/user/app/app.code-workspace') ?? '',
+    /above the distro root/,
+  );
+  assert.match(
+    checkWorkspaceFolders(workspace([{ path: 'a/../../x' }]), '/app.code-workspace') ?? '',
+    /above the distro root/,
+  );
 });
 
 test('rejects absolute paths, Windows separators and uri entries', () => {
