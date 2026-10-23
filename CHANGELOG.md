@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 
 - **WSL Auto Reopen: Reopen Folder in Windows and Keep It There** command, in the Command Palette and the remote menu of WSL windows. It keeps the folder in Windows either just for you (`wslAutoReopen.exclude`) or for everyone who opens the project (`wslAutoReopen.enabled` in the project settings).
 - `wslAutoReopen.exclude` setting: WSL folders and workspace files that stay in Windows, kept in user settings instead of the project.
