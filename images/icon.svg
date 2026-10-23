@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Background: rounded square, transparent corners -->
+  <rect x="0" y="0" width="128" height="128" rx="24" ry="24" fill="#1E1E1E"/>
+
+  <!-- Reopen arrow: circular arc (gap at top-right) with arrowhead -->
+  <path d="M 101.59 50.32 A 40 40 0 1 1 70.95 24.61"
+        fill="none" stroke="#E95420" stroke-width="9" stroke-linecap="round"/>
+  <polygon points="83.75,26.87 72.86,13.78 69.04,35.44" fill="#E95420"
+           stroke="#E95420" stroke-width="2" stroke-linejoin="round"/>
+
+  <!-- Terminal prompt ">_" -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="46,50 60,64 46,78"/>
+    <line x1="67" y1="78" x2="84" y2="78"/>
+  </g>
+</svg>

@@ -6,9 +6,18 @@
   "publisher": "zacca",
   "author": "Pedro Zaccaria",
   "license": "MIT",
+  "icon": "images/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/pZacca/wsl-auto-reopen"
+  },
+  "bugs": {
+    "url": "https://github.com/pZacca/wsl-auto-reopen/issues"
+  },
+  "homepage": "https://github.com/pZacca/wsl-auto-reopen#readme",
+  "galleryBanner": {
+    "color": "#1E1E1E",
+    "theme": "dark"
   },
   "categories": [
     "Other"
